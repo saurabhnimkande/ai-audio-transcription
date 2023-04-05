@@ -1,0 +1,28 @@
+.mainHomepageContainer {
+    padding: 1rem;
+    text-align: center;
+}
+.mainHomepageContainer > div {
+    margin-bottom: 1rem;
+}
+.apiKeyInputContainer {
+    width : 70%;
+    margin: auto;
+}
+.apiKeyInputContainer > p {
+    margin-top: 0.5rem;
+    color: rgb(127, 127, 127);
+    font-size: 0.85rem;
+}
+.uploadFileContainer {
+    width : 70%;
+    margin: auto;
+}
+.requiredFilesText {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+.textAreaContainer {
+    width: 70%;
+    margin: auto;
+}
