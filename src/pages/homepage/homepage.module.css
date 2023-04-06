@@ -1,3 +1,12 @@
+.heading {
+    text-align: center;
+    font-weight: 700;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    padding-top: 1rem;
+    color: rgb(77 77 77 / 99%);
+    word-wrap: break-word;
+}
 .mainHomepageContainer {
     padding: 1rem;
     text-align: center;
@@ -10,7 +19,7 @@
     margin: auto;
 }
 .apiKeyInputContainer > p {
-    margin-top: 0.5rem;
+    margin-top: 0.2rem;
     color: rgb(127, 127, 127);
     font-size: 0.85rem;
 }
@@ -25,4 +34,8 @@
 .textAreaContainer {
     width: 70%;
     margin: auto;
+}
+.audioControl {
+    width: 70%;
+    margin-top: 1rem;
 }

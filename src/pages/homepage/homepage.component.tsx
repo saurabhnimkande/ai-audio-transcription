@@ -4,7 +4,8 @@ import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 import classes from "./homepage.module.css";
 import { callTranscribeAPI } from "../../utils";
-import { Loader } from "../../components/loader.component";
+import { Loader } from "../../components/loader/loader.component";
+import { allowedFileTypes } from "../../mock/allowedFileTypes";
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
@@ -48,7 +49,7 @@ export const Homepage = () => {
     <>
       {showLoader && <Loader></Loader>}
       <div>
-        <div>AI Audio Transcription</div>
+        {/* <div className={classes.heading}>AI Audio Transcription</div> */}
         <div className={classes.mainHomepageContainer}>
           <div>
             <div className={classes.apiKeyInputContainer}>
@@ -58,7 +59,7 @@ export const Homepage = () => {
               />
               <p>
                 If you don't have OpenAI API Key visit{" "}
-                <a href="https://platform.openai.com/account/api-keys">here</a>{" "}
+                <a href="https://platform.openai.com/account/api-keys" target="_blank">here</a>{" "}
               </p>
             </div>
             <div className={classes.uploadFileContainer}>
@@ -71,13 +72,13 @@ export const Homepage = () => {
                 </p>
                 <p className={classes.requiredFilesText}>
                   Support for a single. Please upload file with one of these
-                  formats: mp3, mp4, mpeg, mpga, m4a, wav, or webm.
+                  formats: mp3, mpeg, or wav. File uploads are currently limited to 25 MB.
                 </p>
               </Dragger>
             </div>
             <div>
-              {selectedFile?.originFileObj && (
-                <audio controls>
+              {(selectedFile?.originFileObj && allowedFileTypes.includes(selectedFile?.type)) && (
+                <audio controls className={classes.audioControl}>
                   <source
                     src={URL.createObjectURL(selectedFile?.originFileObj)}
                     type={selectedFile?.originFileObj?.type}

@@ -1,0 +1,1 @@
+export const allowedFileTypes = ["audio/wav","audio/mpeg"];
