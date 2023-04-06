@@ -32,8 +32,8 @@ export const callTranscribeAPI = (
   }
 
   //to check allowed file types
-  if (file && file?.type) {
-    if (!allowedFileTypes.includes(file?.type)) {
+  if (file) {
+    if (!allowedFileTypes.includes(file?.type) || file?.type === "") {
       message.error("File extension not supported.");
       return;
     }
@@ -42,7 +42,7 @@ export const callTranscribeAPI = (
   setLoader(true);
   // apiKey = apiKeyLocal;
   const formData = new FormData();
-  formData.append("file", file?.originFileObj);
+  formData.append("file", file);
   formData.append("model", "whisper-1");
   let headers = {
     Authorization: `Bearer ${apiKey}`,
@@ -54,16 +54,25 @@ export const callTranscribeAPI = (
     })
     .then((res) => {
       setLoader(false);
-      if(res?.data?.text === "") {
+      if (res?.data?.text === "") {
         setData("No speech found.");
       } else {
         setData(res?.data?.text);
       }
-
     })
     .catch((err) => {
       setData("Something went wrong.");
       setLoader(false);
-      message.error("Something went wrong.")
+      message.error("Something went wrong.");
     });
+};
+
+
+export const copyContentToClipboard = async (data: string) => {
+  if (data !== "") {
+    await navigator.clipboard.writeText(data);
+    message.success("Text copied to clipboard");
+  } else {
+    message.error("No text to copy")
+  }
 };

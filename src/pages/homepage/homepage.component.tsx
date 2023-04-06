@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Button, Input, message, Upload } from "antd";
+import React, { useRef, useState } from "react";
+import { Button, Input, Upload } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 import classes from "./homepage.module.css";
-import { callTranscribeAPI } from "../../utils";
+import { callTranscribeAPI, copyContentToClipboard } from "../../utils";
 import { Loader } from "../../components/loader/loader.component";
 import { allowedFileTypes } from "../../mock/allowedFileTypes";
 
@@ -16,6 +16,7 @@ export const Homepage = () => {
   const [selectedFile, setSelectedFile] = useState<any>({});
   const [showLoader, setShowLoader] = useState<boolean>(false);
   const onRemoveTriggered = useRef<boolean>(false);
+  const audioRef = useRef<any>();
 
   const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setApiKey(e?.target?.value);
@@ -32,12 +33,17 @@ export const Homepage = () => {
       if (!onRemoveTriggered.current) {
         info.file.status = "done";
         setSelectedFile(info?.file);
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current.load();
+        }
       } else {
         onRemoveTriggered.current = false;
       }
     },
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);
+      setSelectedFile({originFileObj: e.dataTransfer.files?.[0]})
     },
     onRemove() {
       setSelectedFile({});
@@ -49,7 +55,7 @@ export const Homepage = () => {
     <>
       {showLoader && <Loader></Loader>}
       <div>
-        {/* <div className={classes.heading}>AI Audio Transcription</div> */}
+        <div className={classes.heading}>AI Audio Transcription</div>
         <div className={classes.mainHomepageContainer}>
           <div>
             <div className={classes.apiKeyInputContainer}>
@@ -59,7 +65,12 @@ export const Homepage = () => {
               />
               <p>
                 If you don't have OpenAI API Key visit{" "}
-                <a href="https://platform.openai.com/account/api-keys" target="_blank">here</a>{" "}
+                <a
+                  href="https://platform.openai.com/account/api-keys"
+                  target="_blank"
+                >
+                  here
+                </a>{" "}
               </p>
             </div>
             <div className={classes.uploadFileContainer}>
@@ -72,26 +83,37 @@ export const Homepage = () => {
                 </p>
                 <p className={classes.requiredFilesText}>
                   Support for a single. Please upload file with one of these
-                  formats: mp3, mpeg, or wav. File uploads are currently limited to 25 MB.
+                  formats: mp3, mpeg, or wav. File uploads are currently limited
+                  to 25 MB.
                 </p>
               </Dragger>
             </div>
             <div>
-              {(selectedFile?.originFileObj && allowedFileTypes.includes(selectedFile?.type)) && (
-                <audio controls className={classes.audioControl}>
-                  <source
-                    src={URL.createObjectURL(selectedFile?.originFileObj)}
-                    type={selectedFile?.originFileObj?.type}
-                  />
-                </audio>
-              )}
+              {selectedFile?.originFileObj &&
+                allowedFileTypes.includes(selectedFile?.type) && (
+                  <audio
+                    controls
+                    className={classes.audioControl}
+                    ref={audioRef}
+                  >
+                    <source
+                      src={URL.createObjectURL(selectedFile?.originFileObj)}
+                      type={selectedFile?.originFileObj?.type}
+                    />
+                  </audio>
+                )}
             </div>
           </div>
           <div>
             <Button
               type="primary"
               onClick={() =>
-                callTranscribeAPI(apiKey, selectedFile, setTranscriptData, setShowLoader)
+                callTranscribeAPI(
+                  apiKey,
+                  selectedFile?.originFileObj,
+                  setTranscriptData,
+                  setShowLoader
+                )
               }
             >
               Transcript
@@ -101,7 +123,9 @@ export const Homepage = () => {
             <TextArea rows={6} value={transcriptData} />
           </div>
           <div>
-            <Button>Copy Text to Clipboard</Button>
+            <Button onClick={() => copyContentToClipboard(transcriptData)}>
+              Copy Text to Clipboard
+            </Button>
           </div>
         </div>
       </div>
